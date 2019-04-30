@@ -11,24 +11,29 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/v1/books")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
-    @PostMapping("/book")
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public Book create(@Valid @RequestBody Book book) {
 
         return bookService.save(book);
     }
 
-    @GetMapping("/book")
+    @GetMapping
     public Iterable<Book> read() {
 
         return bookService.findAll();
     }
 
-    @PutMapping("/book")
+    @PutMapping
     public ResponseEntity<Book> update(@RequestBody Book book) {
 
         if (bookService.findById(book.getId()).isPresent()) {
@@ -40,19 +45,19 @@ public class BookController {
         }
     }
 
-    @DeleteMapping("/book/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
 
         bookService.deleteById(id);
     }
 
-    @GetMapping("/book/{id}")
+    @GetMapping("/{id}")
     public Optional<Book> findById(@PathVariable Integer id) {
 
         return bookService.findById(id);
     }
 
-    @GetMapping("/book/search")
+    @GetMapping("/search")
     public Iterable<Book> findByQuery(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "isbn", required = false) String isbn
